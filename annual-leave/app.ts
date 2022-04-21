@@ -1,19 +1,20 @@
 import "reflect-metadata"
-import { AppDataSource } from "./data-source"
-import { User } from "./entities/User"
+import { AppDataSource } from "./database/data-source"
 import {Express} from "express";
 import * as express from "express";
-import { router } from "./routes/user";
+import { user_router } from "./routes/user";
 
 AppDataSource.initialize().then(async () => {
     const app: Express = express();
     const port = 3000;
 
-    app.use(router);
+    app.use(express.json());
+    app.use('/user', user_router);
 
     app.listen(port, () => {
-        console.log(`Example app listening on port ${port}!`)
+        console.log(`Listening on port ${port}!`)
     })
+
 }).catch(error => console.log(error))
 
 

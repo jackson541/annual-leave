@@ -1,13 +1,13 @@
-import {Request, Response} from "express";
 import * as express from "express";
+import { register_controller } from '../controllers/user';
+import { validate_register_user_request } from '../middlewares/user';
 
-const router = express.Router();
+const user_router = express.Router();
 
-router.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!')
-});
+user_router.post('/register', validate_register_user_request, register_controller);
+
 
 export {
-    router
+    user_router
 };
 
