@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import "reflect-metadata"
 import { AppDataSource } from "./database/data-source"
 import {Express} from "express";

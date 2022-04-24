@@ -28,10 +28,12 @@ export class EmailCodeValidation {
     id: number
 
     @Column()
-    email: number
+    email: string
     
-    @Column()
-    code: number
+    @Column({
+        length: 6,
+    })
+    code: string
     
     @Column({
         default: false
