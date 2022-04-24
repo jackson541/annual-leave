@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer'
 import * as jwt from 'jsonwebtoken'
 import { User } from '../database/entities'
 
+
 type EmailData = {
     sender_name: string, 
     sender_email: string, 

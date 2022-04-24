@@ -1,7 +1,7 @@
 import * as Joi from 'joi'
 import { Request, Response, NextFunction } from "express";
 import { MIN_PASSWORD_LENGTH, TEN_MINUTES_IN_MILLISECONDS } from '../constants';
-import { validate_email_already_registered } from './validations'
+import { validate_email_already_registered, generate_hashed_password } from './validations'
 import { parse_error_to_response } from '../utils/funcs';
 import { email_code_validation_repository } from '../database/repositories';
 
@@ -10,13 +10,14 @@ const validate_register_user_request = async (req: Request, res: Response, next:
     const code_regex = /^[0-9]{6}$/;
     const schema = Joi.object().keys({
         email: Joi.string().email().external(validate_email_already_registered, 'check if email already registered').required(),
-        password: Joi.string().min(MIN_PASSWORD_LENGTH).required(),
+        password: Joi.string().min(MIN_PASSWORD_LENGTH).custom(generate_hashed_password, 'transform password in hash').required(),
         first_name: Joi.string().required(),
         code: Joi.string().regex(code_regex).required(),
     })
 
     try {
-        await schema.validateAsync(req.body)
+        const new_body = await schema.validateAsync(req.body)
+        req.body = new_body
     } catch (error) {
         res.status(400).send(parse_error_to_response(error))
         return
