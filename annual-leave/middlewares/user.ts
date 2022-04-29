@@ -1,8 +1,8 @@
 import * as Joi from 'joi'
 import { Request, Response, NextFunction } from "express";
 import { MIN_PASSWORD_LENGTH, TEN_MINUTES_IN_MILLISECONDS } from '../constants';
-import { validate_email_already_registered, generate_hashed_password } from './validations'
-import { parse_error_to_response } from '../utils/funcs';
+import { validate_email_already_registered } from './validations'
+import { parse_error_to_response, generate_hashed_password } from '../utils/funcs';
 import { email_code_validation_repository } from '../database/repositories';
 
 
@@ -84,10 +84,28 @@ const validate_refresh_token_request = async (req: Request, res: Response, next:
 }
 
 
+const validate_login_request = async (req: Request, res: Response, next: NextFunction) => {
+    const schema = Joi.object().keys({
+        email: Joi.string().email().required(),
+        password: Joi.string().required(),
+    })
+
+    try {
+        await schema.validateAsync(req.body)
+    } catch (error) {
+        res.status(400).send(parse_error_to_response(error))
+        return
+    }
+
+    next()
+}
+
+
 export {
     validate_register_user_request,
     validate_code_to_register,
     validate_code_email_request,
-    validate_refresh_token_request
+    validate_refresh_token_request,
+    validate_login_request
 }
 

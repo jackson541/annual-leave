@@ -2,6 +2,7 @@ import { ValidationError } from 'joi'
 import * as nodemailer from 'nodemailer'
 import * as jwt from 'jsonwebtoken'
 import { User } from '../database/entities'
+import * as bcryptjs from 'bcryptjs'
 
 
 type EmailData = {
@@ -34,8 +35,6 @@ const parse_error_to_response = (error: ValidationError) => {
 
 
 const send_email = async (email_data: EmailData) => {
-    return true
-    /*
     const transporter = nodemailer.createTransport({
         host: process.env.EMAIL_SMTP_HOST,
         port: 587,
@@ -55,7 +54,7 @@ const send_email = async (email_data: EmailData) => {
     })
 
     console.log("Message sent: %s", info.messageId);
-    return Boolean(info.messageId) */
+    return Boolean(info.messageId) 
 }
 
 
@@ -70,8 +69,17 @@ const generate_auth_token_for_user = (user: User) => {
 }
 
 
+const generate_hashed_password = (password: string) => {
+    const salt = bcryptjs.genSaltSync(10)
+    const hashed_password = bcryptjs.hashSync(password, salt)
+
+    return hashed_password
+}
+
+
 export {
     parse_error_to_response,
     send_email,
-    generate_auth_token_for_user
+    generate_auth_token_for_user,
+    generate_hashed_password
 }
