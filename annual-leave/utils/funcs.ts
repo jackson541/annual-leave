@@ -3,6 +3,7 @@ import * as nodemailer from 'nodemailer'
 import * as jwt from 'jsonwebtoken'
 import { User } from '../database/entities'
 import * as bcryptjs from 'bcryptjs'
+import { google } from 'googleapis'
 
 
 type EmailData = {
@@ -77,9 +78,19 @@ const generate_hashed_password = (password: string) => {
 }
 
 
+const create_google_connection = () => {
+    return new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        'http://localhost:3000/user/google_login_callback'
+    );
+}
+
+
 export {
     parse_error_to_response,
     send_email,
     generate_auth_token_for_user,
-    generate_hashed_password
+    generate_hashed_password,
+    create_google_connection
 }
